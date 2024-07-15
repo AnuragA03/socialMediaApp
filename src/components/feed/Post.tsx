@@ -1,6 +1,7 @@
 import Image from "next/image"
 import Comments from "./Comments"
 
+
 const Post = () => {
     return (
         <div className="flex flex-col gap-4">
