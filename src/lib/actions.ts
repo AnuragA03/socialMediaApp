@@ -2,7 +2,8 @@
 
 import { auth } from "@clerk/nextjs/server"
 import prisma from "./client"
-import { z } from "zod"
+import { boolean, z } from "zod"
+
 
 
 export const switchFollow = async (userId: string) => {
@@ -177,7 +178,12 @@ export const declineFollowRequests = async (userId: string) => {
 
 
 // Server actions to send input to update user profile
-export const updateProfile = async (formData: FormData) => {
+export const updateProfile = async (
+    prevState: { success: boolean; error: boolean },
+    payload: { formData: FormData, cover: string }
+) => {
+
+    const { formData, cover } = payload
 
     const fields = Object.fromEntries(formData)
 
@@ -189,27 +195,27 @@ export const updateProfile = async (formData: FormData) => {
     console.log(fields)
 
     const Profile = z.object({
-        cover:z.string().optional(),
-        name:z.string().max(60).optional(),
-        surname:z.string().max(60).optional(),
-        description:z.string().max(255).optional(),
-        city:z.string().max(60).optional(),
-        school:z.string().max(60).optional(),
-        work:z.string().max(60).optional(),
-        website:z.string().max(60).optional(),
+        cover: z.string().optional(),
+        name: z.string().max(60).optional(),
+        surname: z.string().max(60).optional(),
+        description: z.string().max(255).optional(),
+        city: z.string().max(60).optional(),
+        school: z.string().max(60).optional(),
+        work: z.string().max(60).optional(),
+        website: z.string().max(60).optional(),
     })
 
-    const validatedFields = Profile.safeParse(filteredFields)
+    const validatedFields = Profile.safeParse({ cover, ...filteredFields })
 
-    if(!validatedFields.success){
+    if (!validatedFields.success) {
         console.log(validatedFields.error.flatten().fieldErrors)
-        return "err"
+        return { success: false, error: true }
     }
 
     const { userId } = auth();
 
-    if(!userId){
-        return "err"
+    if (!userId) {
+        return { success: false, error: true }
     }
 
     try {
@@ -219,8 +225,85 @@ export const updateProfile = async (formData: FormData) => {
             },
             data: validatedFields.data
         })
+
+        //if all good
+        return { success: true, error: false }
+
     } catch (error) {
         console.log(error)
+        return { success: false, error: true }
     }
 
 }
+
+// Like Action
+
+export const switchLike = async (postId: number) => {
+    const { userId } = auth()
+
+    if (!userId) throw new Error("User is not authenticated")
+
+    try {
+        // if we liked already we are removing it or we add it
+        const existingLike = await prisma.like.findFirst({
+            where: {
+                postId,
+                userId
+            }
+        })
+
+        if (existingLike) {
+            await prisma.like.delete({
+                where: {
+                    id: existingLike.id
+                }
+            })
+        }
+
+        //if doesnt exist
+        else {
+            await prisma.like.create({
+                data: {
+                    postId,
+                    userId
+                }
+            })
+        }
+    } catch (error) {
+        console.log(error)
+        throw new Error("Something went wrong")
+    }
+}
+
+
+// action for adding comment
+
+export const addComment = async (postId: number, desc: string)=>{
+    const {userId} = auth()
+
+    if(!userId)
+        throw new Error("User is not authenticated")
+
+    try {
+        const createdComment = await prisma.comment.create({
+            data:{
+                desc,
+                userId,
+                postId
+            },
+            include:{
+                user: true
+            },
+        })
+
+        return createdComment
+
+    } catch (error) {
+        console.log(error)
+        throw new Error("Something went wrong")
+    }
+}
+
+
+
+// action for adding post
