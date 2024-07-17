@@ -6,7 +6,7 @@ const Feed = async ({ username }: { username?: string }) => {
 
   const { userId } = auth()
 
-  let posts:any[] = [];
+  let posts: any[] = [];
 
 
   if (username) {
@@ -36,6 +36,8 @@ const Feed = async ({ username }: { username?: string }) => {
   }
 
   if (!username && userId) {
+
+
     const following = await prisma.follower.findMany({
       where: {
         followerId: userId
@@ -46,13 +48,16 @@ const Feed = async ({ username }: { username?: string }) => {
     });
 
     const followingIds = following.map(f => f.followingId)
+    const ids = [userId, ...followingIds]
 
     console.log(followingIds)
+
+    //  fetching post to show onto our feed
 
     posts = await prisma.post.findMany({
       where: {
         userId: {
-          in: followingIds
+          in: ids
         }
       },
       include: {
@@ -80,7 +85,7 @@ const Feed = async ({ username }: { username?: string }) => {
       {posts.length ? (posts.map(post => (
         <Post key={post.id} post={post} />
       ))) : "No posts found"}
-      
+
     </div>
   )
 }
