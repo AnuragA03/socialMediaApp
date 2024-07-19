@@ -2,14 +2,18 @@ import Image from "next/image"
 import Comments from "./Comments"
 import { Post as PostType, User } from "@prisma/client"
 import PostInteraction from "./PostInteraction"
+import { Suspense } from "react"
+import PostInfo from "./PostInfo"
+import { auth } from "@clerk/nextjs/server"
 
 // type for post
 type FeedPostType = PostType & { user: User } & { likes: [{ userId: string }] } & { _count: { comments: number } }
 
 
 const Post = ({ post }: { post: FeedPostType }) => {
+    const {userId} = auth();
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 ">
             {/* User */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
@@ -23,11 +27,8 @@ const Post = ({ post }: { post: FeedPostType }) => {
                         {(post.user.name && post.user.surname) ? post.user.name + " " + post.user.surname : post.user.username}
                     </span>
                 </div>
-                <Image
-                    src="/more.png"
-                    alt=""
-                    width={16}
-                    height={16} />
+                {userId === post.user.id 
+                && <PostInfo postId={post.id}/>}
             </div>
 
             {/* Desc */}
@@ -44,10 +45,14 @@ const Post = ({ post }: { post: FeedPostType }) => {
 
             {/* Interaction */}
             {/* we have to create different components because it updates such as likes etc. */}
-            <PostInteraction postId={post.id} likes={post.likes.map((like) => like.userId)} commentNumber={post._count.comments}/>
+            <Suspense fallback="Loading...">
+                <PostInteraction postId={post.id} likes={post.likes.map((like) => like.userId)} commentNumber={post._count.comments} />
+            </Suspense>
 
-            {/* Comments */}
-            <Comments postId={post.id} />
+            <Suspense fallback="Loading...">
+                {/* Comments */}
+                <Comments postId={post.id} />
+            </Suspense>
 
         </div>
     )
