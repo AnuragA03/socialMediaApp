@@ -40,7 +40,7 @@ const PostInteraction = ({ postId, likes, commentNumber }: { postId: number; lik
                 <form action={likeAction}>
                     <button>
                         {/* Likes */}
-                        <div className="flex items-center gap-4 bg-slate-50 p-2 rounded-xl">
+                        <div className="flex items-center gap-4 bg-white p-2 rounded-xl">
                             <Image
                                 src={optimisticLike.isLiked ? "/liked.png" : "/like.png"}
                                 alt=""
@@ -54,7 +54,7 @@ const PostInteraction = ({ postId, likes, commentNumber }: { postId: number; lik
                 </form>
 
                 {/* Comment */}
-                <div className="flex items-center gap-4 bg-slate-50 p-2 rounded-xl">
+                <div className="flex items-center gap-4  bg-white p-2 rounded-xl">
                     <Image
                         src="/comment.png"
                         alt=""
@@ -66,7 +66,7 @@ const PostInteraction = ({ postId, likes, commentNumber }: { postId: number; lik
                 </div>
             </div>
             <div className="">
-                <div className="flex items-center gap-4 bg-slate-50 p-2 rounded-xl">
+                <div className="flex items-center gap-4  bg-white p-2 rounded-xl">
                     <Image
                         src="/share.png"
                         alt=""

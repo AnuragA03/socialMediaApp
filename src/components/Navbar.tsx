@@ -17,16 +17,16 @@ const Navbar = () => {
                 <div className=" flex gap-6 text-gray-600">
                     <Link href="/" className='flex items-center gap-2' >
                         <Image src="/home.png" alt='homePage' width={16} height={16} className='w-5 h-4' />
-                        <span>HomePage</span>
+                        <span><b>HomePage</b></span>
                     </Link>
-                    <Link href="/" className='flex items-center gap-2' >
+                    {/* <Link href="/" className='flex items-center gap-2' >
                         <Image src="/friends.png" alt='homePage' width={16} height={16} className='w-5 h-4' />
                         <span>Friends</span>
                     </Link>
                     <Link href="/" className='flex items-center gap-2' >
                         <Image src="/stories.png" alt='homePage' width={16} height={16} className='w-5 h-4' />
                         <span>Stories</span>
-                    </Link>
+                    </Link> */}
                 </div>
                 <div className="hidden xl:flex p-2 bg-slate-100 items-center rounded-xl">
                     <input type="text" placeholder='search...' className='bg-transparent outline-none'/>

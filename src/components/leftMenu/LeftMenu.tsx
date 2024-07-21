@@ -12,7 +12,7 @@ const LeftMenu = ({type}:{type: "home" | "profile"}) => {
       {type === "home" && <ProfileCard />}
 
       {/* LeftBar menu items */}
-      <div className="p-4 bg-white rounded-lg shadow-md text-sm text-gray-500 flex flex-col gap-2">
+      {/* <div className="p-4 bg-white rounded-lg shadow-md text-sm text-gray-500 flex flex-col gap-2">
         <Link href="/" className="flex items-center gap-4 p-2 rounded-lg hover:bg-slate-100" >
           <Image src="/posts.png" alt="" width={20} height={20} />
           <span>My Posts</span>
@@ -59,7 +59,7 @@ const LeftMenu = ({type}:{type: "home" | "profile"}) => {
         </Link>
         <hr className="border-t-1 border-gray-50 w-36 self-center" />
         
-      </div>
+      </div> */}
 
       {/* Sponsered Ad */}
       <Ad size="sm" />
